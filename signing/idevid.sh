@@ -26,11 +26,11 @@ mv *key.pem ${ROOT}/var/aziot/secrets
 
 chown aziotcs:aziotcs ${ROOT}/var/aziot/certs/*.cert.pem
 chmod 644 ${ROOT}//var/aziot/certs/*.cert.pem
-# chown aziotks:aziotks ${ROOT}/var/aziot/secrets/*.key.pem
+chown aziotks:aziotks ${ROOT}/var/aziot/secrets/*.key.pem
 chmod 600 ${ROOT}/var/aziot/secrets/*.key.pem
-# chown aziotcs:aziotcs ${ROOT}/var/aziot/certs
+chown aziotcs:aziotcs ${ROOT}/var/aziot/certs
 chmod 755 ${ROOT}/var/aziot/certs
-# chown aziotks:aziotks ${ROOT}/var/aziot/secrets
+chown aziotks:aziotks ${ROOT}/var/aziot/secrets
 chmod 700 ${ROOT}/var/aziot/secretsID.cert
 
 popd
@@ -43,4 +43,4 @@ ln -fs ${ROOT}/var/aziot/certs/globalsign-root.cert.pem
 tree ${ROOT}
 
 # show IDevID.cert.pem
-openssl x509 -in ${ROOT}var/aziot/certs/IDevID.cert.pem -text -noout
+openssl x509 -in ${ROOT}/var/aziot/certs/IDevID.cert.pem -text -noout
