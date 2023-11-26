@@ -6,6 +6,7 @@ Based on: https://techcommunity.microsoft.com/t5/internet-of-things-blog/automat
 ```
 DEV_ID="1231121-00001" bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/idevid.sh)
 ```
+
 * Private
 ```
 DEV_ID="1231121-00001" bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/idevid.sh?token=GHSAT0AAAAAACKPY6BLZUR3VEGC2OSBTI5CZLDMV4Q)
@@ -21,5 +22,5 @@ bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/sig
 
 * Private
 ```
-bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/ldevid.sh)
+bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/ldevid.sh?token=GHSAT0AAAAAACKPY6BLWIFBSVZS2P4LI65AZLDMY5Q)
 ```
