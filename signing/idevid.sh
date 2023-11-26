@@ -31,13 +31,16 @@ chmod 600 ${ROOT}/var/aziot/secrets/*.key.pem
 # chown aziotcs:aziotcs ${ROOT}/var/aziot/certs
 chmod 755 ${ROOT}/var/aziot/certs
 # chown aziotks:aziotks ${ROOT}/var/aziot/secrets
-chmod 700 ${ROOT}/var/aziot/secrets
+chmod 700 ${ROOT}/var/aziot/secretsID.cert
 
 popd
 
 rm -rf ${WORK_DIR}
 
-ln -fs ${ROOT}/var/aziot/certs/IDevID.cert.pem 
-ln -fs ${ROOT}/var/aziot/certs/globalsign-root.cert.pem 
+ln -fs ${ROOT}/var/aziot/certs/IDevID.cert.pem
+ln -fs ${ROOT}/var/aziot/certs/globalsign-root.cert.pem
 
 tree ${ROOT}
+
+# show IDevID.cert.pem
+openssl x509 -in ${ROOT}var/aziot/certs/IDevID.cert.pem -text -noout
