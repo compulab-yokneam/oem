@@ -2,7 +2,7 @@
 
 ## IDevID
 ```
-bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/idevid.sh)
+DEV_ID="1231121-00001" bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/idevid.sh)
 ```
 
 ## LDevID
