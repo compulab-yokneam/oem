@@ -1,9 +1,16 @@
 #!/bin/bash -ex
 
+FILES=${FILES:=$(pwd)/ldevid/files}
+SCRIPTS=${SCRIPTS:=$(pwd)/ldevid/sripts}
+
+tpm_command=""
+enroll_command=""
+
 function init_data() {
-cat << eof > .00.tpm_create_persist_ek.cmd
+local _file=${SCRIPTS}/00.tpm_create_persist_ek.cmd
+cat << eof > ${_file}
 #!/bin/bash -xe
-cat << _eof > ek_template.json
+cat << _eof > ${FILES}/ek_template.json
 {
 	"type": "TPM2_ALG_RSA",
 	"name_alg": "TPM2_ALG_SHA256",
@@ -32,13 +39,14 @@ cat << _eof > ek_template.json
 }
 _eof
 tpmtool evict -handle 0x81010001 || true
-tpmtool createprimary -endorsement -template ek_template.json -persistent 0x81010001
+tpmtool createprimary -endorsement -template ${FILES}/ek_template.json -persistent 0x81010001
 eof
-tpm_command+=" .00.tpm_create_persist_ek.cmd"
+tpm_command+=" ${_file}"
 
-cat << eof > .01.tpm_create_parent_ldevid.cmd
+_file=${SCRIPTS}/01.tpm_create_parent_ldevid.cmd
+cat << eof > ${_file}
 #!/bin/bash -xe
-cat << _eof > srk_template.json
+cat << _eof > ${FILES}/srk_template.json
 {
 	"type": "TPM2_ALG_RSA",
 	"name_alg": "TPM2_ALG_SHA256",
@@ -62,13 +70,14 @@ cat << _eof > srk_template.json
 }
 _eof
 tpmtool evict -handle 0x81000001 || true
-tpmtool createprimary -template srk_template.json -persistent 0x81000001
+tpmtool createprimary -template ${FILES}/srk_template.json -persistent 0x81000001
 eof
-tpm_command+=" .01.tpm_create_parent_ldevid.cmd"
+tpm_command+=" ${_file}"
 
-cat << eof > .02.tpm_create_private_key_ldevid.cmd
+_file=${SCRIPTS}/02.tpm_create_private_key_ldevid.cmd
+cat << eof > ${_file}
 #!/bin/bash -xe
-cat << _eof > rsa_template.json
+cat << _eof > ${FILES}/rsa_template.json
 {
 	"type": "TPM2_ALG_RSA",
 	"name_alg": "TPM2_ALG_SHA256",
@@ -86,13 +95,14 @@ cat << _eof > rsa_template.json
 }
 _eof
 tpmtool evict -handle 0x81020000 || true
-tpmtool create -template rsa_template.json -persistent 0x81020000 -parent 0x81000001
+tpmtool create -template ${FILES}/rsa_template.json -persistent 0x81020000 -parent 0x81000001
 eof
-tpm_command+=" .02.tpm_create_private_key_ldevid.cmd"
+tpm_command+=" ${_file}"
 
-cat << eof > .03.enroll.cmd
+_file=${SCRIPTS}/03.enroll.cmd
+cat << eof > ${_file}
 #!/bin/bash -xe
-cat << _eof > client.cfg
+cat << _eof > ${FILES}/client.cfg
 {
 	"server": "compulab-ldevid.est.edge.dev.globalsign.com:443",
 		"private_key": {
@@ -101,14 +111,14 @@ cat << _eof > client.cfg
 			"persistent_handle": 2164391936,
 			"storage_handle": 2164260865,
 			"ek_handle": 2164326401,
-			"ek_certs": "combined.pem"
+			"ek_certs": "${FILES}/combined.pem"
 		}
 	}
 }
 _eof
-estclient tpmenroll -config client.cfg
+estclient tpmenroll -config ${FILES}/client.cfg
 eof
-enroll_command+=" .03.enroll.cmd"
+enroll_command+=" ${_file}"
 }
 
 function clear_data() {
@@ -119,13 +129,13 @@ function clear_data() {
 
 function _create_combined_pem() {
 # it is up to the caller to place all input pem files into the working folder
-	tpmtool nvread -handle 0x1c00002 | openssl x509 -inform der -out tpmcert.pem
-	cat IDevID.cert.pem globalsign-root.cert.pem tpmcert.pem  > combined.pem
+	tpmtool nvread -handle 0x1c00002 | openssl x509 -inform der -out ${FILES}/tpmcert.pem
+	cat IDevID.cert.pem globalsign-root.cert.pem ${FILES}/tpmcert.pem  > ${FILES}/combined.pem
 }
 
 function _issue_tpm_command() {
 for _tpm_command in ${tpm_command};do
-	bash -x $(pwd)/${_tpm_command}
+	bash -x ${_tpm_command}
 done
 if [ "" ];then
 	tpmtool createprimary -endorsement -template ek_template.json -persistent 0x81010001
@@ -136,7 +146,7 @@ fi
 
 function _issue_enroll() {
 for _enroll_command in ${enroll_command};do
-	bash -x $(pwd)/${_enroll_command}
+	bash -x ${_enroll_command}
 done
 if [ "" ];then
 	estclient tpmenroll -config client.cfg
@@ -149,8 +159,7 @@ function issue_enroll() {
 	_issue_enroll
 }
 
-tpm_command=""
-enroll_command=""
+mkdir -p ${FILES} ${SCRIPTS}
 clear_data
 init_data
 issue_enroll
