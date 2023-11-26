@@ -128,29 +128,21 @@ function clear_data() {
 }
 
 function _create_combined_pem() {
-# it is up to the caller to place all input pem files into the working folder
+	# it is up to the caller to place all input pem files into the working folder
 	tpmtool nvread -handle 0x1c00002 | openssl x509 -inform der -out ${FILES}/tpmcert.pem
 	cat IDevID.cert.pem globalsign-root.cert.pem ${FILES}/tpmcert.pem  > ${FILES}/combined.pem
 }
 
 function _issue_tpm_command() {
-for _tpm_command in ${tpm_command};do
-	bash -x ${_tpm_command}
-done
-if [ "" ];then
-	tpmtool createprimary -endorsement -template ek_template.json -persistent 0x81010001
-	tpmtool createprimary -template srk_template.json -persistent 0x81000001
-	tpmtool create -template rsa_template.json -persistent 0x81020000 -parent 0x81000001
-fi
+	for _tpm_command in ${tpm_command};do
+		bash -x ${_tpm_command}
+	done
 }
 
 function _issue_enroll() {
-for _enroll_command in ${enroll_command};do
-	bash -x ${_enroll_command}
-done
-if [ "" ];then
-	estclient tpmenroll -config client.cfg
-fi
+	for _enroll_command in ${enroll_command};do
+		bash -x ${_enroll_command}
+	done
 }
 
 function issue_enroll() {
