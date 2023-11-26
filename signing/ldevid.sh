@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 FILES=${FILES:=$(pwd)/ldevid/files}
-SCRIPTS=${SCRIPTS:=$(pwd)/ldevid/sripts}
+SCRIPTS=${SCRIPTS:=$(pwd)/ldevid/scripts}
 
 tpm_command=""
 enroll_command=""
