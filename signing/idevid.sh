@@ -19,10 +19,11 @@ openssl req -nodes -new -subj /CN=${DEV_ID} -sha256 -keyout IDevID.key.pem -out 
 # Send the CSR to GlobalSign's simple enroll EST endpoint using curl, to obtain the IDevID certificate that is signed with the root CA and paired with the private key created earlier.
 curl -X POST --data-binary "@IDevID.csr" -H "Content-Transfer-Encoding:base64" -u ${COMPULAB_CRED} -H "Content-Type:application/pkcs10" ${COMPULAB_SENROLM} | openssl base64 -d | openssl pkcs7 -inform DER -outform PEM -print_certs | openssl x509 -out IDevID.cert.pem
 
-mkdir -p ${ROOT}/var/aziot/{certs,secrets}
+mkdir -p ${ROOT}/var/aziot/{certs,secrets,ek}
 
 mv *cert.pem ${ROOT}/var/aziot/certs
 mv *key.pem ${ROOT}/var/aziot/secrets
+mv IDevID.csr ${ROOT}/var/aziot/ek
 
 chown aziotcs:aziotcs ${ROOT}/var/aziot/certs/*.cert.pem
 chmod 644 ${ROOT}//var/aziot/certs/*.cert.pem
