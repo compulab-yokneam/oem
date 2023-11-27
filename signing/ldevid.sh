@@ -104,7 +104,7 @@ cat << eof > ${_file}
 #!/bin/bash -xe
 cat << _eof > ${FILES}/client.cfg
 {
-	"server": "compulab-ldevid.est.edge.dev.globalsign.com:443",
+	"server": "compulab-ldevid.est.edge.globalsign.com:443",
 		"private_key": {
 		"tpm": {
 			"device": "/dev/tpmrm0",
