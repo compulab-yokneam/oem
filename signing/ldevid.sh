@@ -130,7 +130,9 @@ function clear_data() {
 function _create_combined_pem() {
 	# it is up to the caller to place all input pem files into the working folder
 	tpmtool nvread -handle 0x1c00002 | openssl x509 -inform der -out ${FILES}/tpmcert.pem
-	cat IDevID.cert.pem globalsign-root.cert.pem ${FILES}/tpmcert.pem  > ${FILES}/combined.pem
+	INTER_URI=$(openssl x509 -in ${FILES}/tpmcert.pem -text -noout | awk -F"URI:" '/CA Issuers/&&($0=$2)')
+	curl ${INTER_URI}| openssl x509 -inform der -out ${FILES}/inter.pem
+	cat ${FILES}/tpmcert.pem ${FILES}/inter.pem  globalsign-root.cert.pem > ${FILES}/combined.pem
 }
 
 function _issue_tpm_command() {
