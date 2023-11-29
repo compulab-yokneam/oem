@@ -132,7 +132,9 @@ function _create_combined_pem() {
 	tpmtool nvread -handle 0x1c00002 | openssl x509 -inform der -out ${FILES}/tpmcert.pem
 	INTER_URI=$(openssl x509 -in ${FILES}/tpmcert.pem -text -noout | awk -F"URI:" '/CA Issuers/&&($0=$2)')
 	curl ${INTER_URI}| openssl x509 -inform der -out ${FILES}/inter.pem
-	cat ${FILES}/tpmcert.pem ${FILES}/inter.pem  globalsign-root.cert.pem > ${FILES}/combined.pem
+	ROOT_URI=$(openssl x509 -in ${FILES}/inter.pem -text -noout | awk -F"URI:" '/CA Issuers/&&($0=$2)')
+	curl ${ROOT_URI}| openssl x509 -inform der -out ${FILES}/root.pem
+	cat ${FILES}/tpmcert.pem ${FILES}/inter.pem ${FILES}/root.pem > ${FILES}/combined.pem
 }
 
 function _issue_tpm_command() {
