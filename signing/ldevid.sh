@@ -116,7 +116,7 @@ cat << _eof > ${FILES}/client.cfg
 	}
 }
 _eof
-estclient tpmenroll -config ${FILES}/client.cfg
+estclient tpmenroll -config ${FILES}/client.cfg -cn ${DEV_ID}
 eof
 enroll_command+=" ${_file}"
 }
@@ -155,7 +155,16 @@ function issue_enroll() {
 	_issue_enroll
 }
 
+function get_dev_id() {
+	local _DEV_ID=$(cat /sys/devices/virtual/dmi/id/product_serial 2>/dev/null)
+	[[ ${_DEV_ID:-""} != "N/A" ]] || _DEV_ID=$(uuidgen --time)
+	[[ -n ${_DEV_ID:-""} ]] || _DEV_ID=$(uuidgen --time)
+	echo ${_DEV_ID}
+}
+
 mkdir -p ${FILES} ${SCRIPTS}
+DEV_ID=${DEV_ID:=$(get_dev_id)}
+
 clear_data
 init_data
 issue_enroll
