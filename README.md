@@ -11,5 +11,5 @@ DEV_ID="1231121-00001" bash <(curl -L https://raw.githubusercontent.com/compulab
 Based on: https://iot.globalsign.com/intranet/documents/58/135/GlobalSign%20LDevID%20Enrollment%20with%20IoT%20Edge%20Enroll%20and%20Infineon%20TPM%2011.9.20s.pdf
 
 ```
-bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/ldevid.sh)
+DEV_ID="1231121-00001" bash <(curl -L https://raw.githubusercontent.com/compulab-yokneam/oem/master/signing/ldevid.sh)
 ```
