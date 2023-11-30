@@ -1,9 +1,16 @@
 #!/bin/bash -x
 
+function get_dev_id() {
+	local _DEV_ID=$(cat /sys/devices/virtual/dmi/id/product_serial 2>/dev/null)
+	[[ ${_DEV_ID:-""} != "N/A" ]] || _DEV_ID=$(uuidgen --time)
+	[[ -n ${_DEV_ID:-""} ]] || _DEV_ID=$(uuidgen --time)
+	echo ${_DEV_ID}
+}
+DEV_ID=${DEV_ID:=$(get_dev_id)}
+
 COMPULAB_CRED="user:oI8whITojdjZDJCJsmiv"
 COMPULAB_CACERTS="https://compulab-idevid.est.edge.globalsign.com:443/.well-known/est/cacerts"
 COMPULAB_SENROLM="https://compulab-idevid.est.edge.globalsign.com:443/.well-known/est/simpleenroll"
-DEV_ID=${DEV_ID:="IDevID"}
 WORK_DIR=$(mktemp --directory)
 ROOT=${ROOT:=$(pwd)}
 
@@ -25,14 +32,14 @@ mv *cert.pem ${ROOT}/var/aziot/certs
 mv *key.pem ${ROOT}/var/aziot/secrets
 mv IDevID.csr ${ROOT}/var/aziot/ek
 
-chown aziotcs:aziotcs ${ROOT}/var/aziot/certs/*.cert.pem
-chmod 644 ${ROOT}//var/aziot/certs/*.cert.pem
-chown aziotks:aziotks ${ROOT}/var/aziot/secrets/*.key.pem
+chown aziotcs:aziotcs ${ROOT}/var/aziot/certs/*.cert.pem 2>/dev/null
+chmod 644 ${ROOT}/var/aziot/certs/*.cert.pem
+chown aziotks:aziotks ${ROOT}/var/aziot/secrets/*.key.pem 2>/dev/null
 chmod 600 ${ROOT}/var/aziot/secrets/*.key.pem
-chown aziotcs:aziotcs ${ROOT}/var/aziot/certs
+chown aziotcs:aziotcs ${ROOT}/var/aziot/certs 2>/dev/null
 chmod 755 ${ROOT}/var/aziot/certs
-chown aziotks:aziotks ${ROOT}/var/aziot/secrets
-chmod 700 ${ROOT}/var/aziot/secretsID.cert
+chown aziotks:aziotks ${ROOT}/var/aziot/secrets 2>/dev/null
+chmod 700 ${ROOT}/var/aziot/secrets
 
 popd
 
